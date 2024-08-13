@@ -1,0 +1,78 @@
+---
+import type { IAvailableDemands } from "types/app";
+
+import Layouts from "@layouts/Layouts.astro";
+import { BreadCrumb } from "@components/utils";
+import { TabView, CropDetails } from "@components/products/grower/crops";
+
+import {
+  convertToKebabCase,
+  generateMarketAvailabilityDataDynamic,
+} from "@utils/functions";
+import { getAvaiableCrops, getCropVarieties } from "@utils/api";
+
+export async function getStaticPaths() {
+  const availableDemands: IAvailableDemands[] = [];
+
+  const { statusCode, data } = await getAvaiableCrops();
+
+  if (statusCode == 200) {
+    for (const c of data) {
+      const response = await getCropVarieties(c._id);
+      if (response.statusCode == 200 && response.data.length > 0) {
+        availableDemands.push({
+          ...c,
+          link: convertToKebabCase(c.name),
+          seasonality: generateMarketAvailabilityDataDynamic(c.plantingDates),
+          varieties: response.data.map((v) => ({
+            _id: v._id,
+            name: v.name,
+            imageUrl: v.imageUrl,
+          })),
+        });
+      }
+    }
+  }
+
+  return availableDemands.map((crop) => {
+    return {
+      params: { crop: crop.link },
+      props: { crop },
+    };
+  });
+}
+
+const { crop } = Astro.props;
+---
+
+<Layouts
+  title={`${crop.name} • Grower • Products | Complete Farmer`}
+  description={crop.description}
+>
+  <BreadCrumb
+    title="Browse crops"
+    bgColor="bg-grower-400"
+    textColor="text-grower-500"
+    href="/products/grower/new-farmer#available-crops"
+  />
+  <div class="pt-14 space-y-10">
+    <div>
+      <CropDetails {crop} />
+    </div>
+    <div>
+      <TabView {crop} />
+    </div>
+  </div>
+</Layouts>
+<script
+  is:inline
+  type="text/javascript"
+  define:vars={{ cropName: crop.name, cropId: crop._id }}
+>
+  window.fbq("track", "ViewContent", {
+    content_type: "product",
+    content_ids: [cropId],
+    content_name: cropName,
+    content_category: "Crop Details Page",
+  });
+</script>

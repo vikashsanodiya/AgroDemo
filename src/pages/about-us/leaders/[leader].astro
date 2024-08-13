@@ -1,0 +1,93 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+
+import { ChevronIcon } from "@assets/icons";
+import { getLeaderShip } from "@utils/prismic";
+
+export async function getStaticPaths() {
+  const leadershipData = await getLeaderShip({
+    page: 1,
+    pageSize: 10,
+  });
+
+  return leadershipData.results.map((leader) => {
+    return {
+      params: { leader: leader?.uid },
+      props: {
+        leader: {
+          imageUrl: leader?.data?.image?.url.replace(
+            "?auto=compress,format",
+            ""
+          ),
+          uid: leader?.uid,
+          name: leader?.data?.fullname[0]?.text,
+          role: leader?.data?.position[0]?.text,
+          linkedIn: leader?.data?.linkedin?.url,
+          quote:
+            leader.data?.quote.length === 1
+              ? [...leader.data.quote]
+              : leader.data?.quote,
+        },
+      },
+    };
+  });
+}
+
+const { leader } = Astro.props;
+---
+
+<Layouts
+  title={`${leader.name} • Leaders • About Us • | Complete Farmer`}
+  description="We are providing cutting-edge technological farming protocols and innovations with a unique business model and logistics that are revolutionizing..."
+>
+  <div class="bg-white py-4 sm:py-10 lg:py-32">
+    <div class="mx-auto max-w-7xl">
+      {
+        Object.keys(leader).length > 0 && (
+          <div class="flex flex-col-reverse sm:flex-row gap-4 p-4 sm:px-8">
+            <div class="sm:w-3/5 lg:w-1/2">
+              <div class="mx-auto">
+                <p class=" text-[28px] text-5xl font-bold text-left text-custom_black-900">
+                  {leader.name}
+                </p>
+                <p class="mt-1 sm:mt-2 text-bold leading-8 text-gray-800 text-xs sm:text-base font-bold text-left">
+                  {leader.role}
+                </p>
+
+                <dl class="mt-5 lg:mt-10 max-w-xl sm:space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
+                  <div class="flex flex-col justify-start items-start relative gap-6">
+                    {leader.quote.map(({ text }: { text: string }) => {
+                      return (
+                        <p class="inline font-normal text-gray-900">{text}</p>
+                      );
+                    })}
+                  </div>
+                </dl>
+
+                <div class="justify-start items-start relative gap-0.5 pt-12 hidden sm:flex">
+                  <a
+                    target="_blank"
+                    href={leader.linkedIn}
+                    rel="noopener noreferrer"
+                    class="flex items-end justify-center text-base md:text-xl font-bold text-left text-grower-500 hover:underline hover:cursor-pointer"
+                  >
+                    <span class="">Follow {leader.name} on LinkedIn</span>
+                    <ChevronIcon className="-rotate-90" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="mx-auto  sm:h-auto pb-10 sm:w-2/5 lg:w-1/2">
+              <img
+                class="bg-gray-50 object-cover rounded-lg"
+                src={leader.imageUrl}
+                alt={leader.name}
+              />
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</Layouts>

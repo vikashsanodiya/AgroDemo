@@ -1,0 +1,80 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+
+import HeroContainer from "@components/products/HeroContainer.astro";
+import { Hero } from "@components/products/grower";
+import { Section } from "@components/utils";
+
+import NFImageDesktop from "@assets/images/products/grower/hero-right.webp";
+import NFImageTablet from "@assets/images/products/grower/hero-right-tablet.webp";
+
+import EFImageDesktop from "@assets/images/products/grower/hero-right-2.webp";
+import EFImageTablet from "@assets/images/products/grower/hero-right-2-tablet.webp";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+
+const initialTabs = [
+  {
+    current: true,
+    name: "New Farmer",
+    href: "/products/grower/new-farmer",
+    images: {
+      tablet: NFImageTablet.src,
+      desktop: NFImageDesktop.src,
+    },
+    data: {
+      title: "Farm with confidence as a first-time farmer.",
+      description:
+        "Starting a farm can be daunting, especially for new farmers. Complete Farmer Grower makes it easy by providing you with expert support and all the necessary resources to get your farm up and running. ",
+      firstButtonText: "Sign up",
+      secondButtonText: "See a Demo",
+    },
+  },
+  {
+    current: false,
+    name: "Existing Farmer",
+    href: "/products/grower/existing-farmer",
+    images: {
+      tablet: EFImageTablet.src,
+      desktop: EFImageDesktop.src,
+    },
+    data: {
+      title: "Scale your farm with help from the food production experts",
+      description:
+        "Whether you are a small or large-scale farmer, access all the right support and resources to help you guess less, grow more, minimize losses, maximise profitability, and connect to new markets.",
+      width: "w-6/6",
+      height: "h-24",
+      margintop: "mt-10",
+      firstButtonText: "Get Started",
+      secondButtonText: "See a Demo",
+    },
+  },
+];
+
+const pathname = Astro.url.pathname;
+
+const activeTabIndex = pathname.includes("new-farmer") ? 0 : 1;
+
+const tabs = initialTabs.map((tab, i) => {
+  tab.current = i === activeTabIndex;
+  return tab;
+});
+
+const currentTab = tabs.find((tab) => tab.current);
+---
+
+<Layouts {title} {description}>
+  <HeroContainer bgImage="bg-hero-grower">
+    <Hero {tabs} {currentTab} client:idle />
+  </HeroContainer>
+  <slot />
+  <Section client:visible />
+</Layouts>
+
+<script async is:inline type="text/javascript" src="/simpleParallax.min.js"
+></script>

@@ -1,0 +1,91 @@
+---
+import type { IAvailableCropOffers } from "types/app";
+
+import Layouts from "@layouts/Layouts.astro";
+import HeroContainer from "@components/products/HeroContainer.astro";
+
+import {
+  Hero,
+  ExperienceCrop,
+  CustomerStoriesSwiper,
+  ProcurementTurnAround,
+} from "@components/products/buyer";
+import { AvailableCrops, Section } from "@components/utils";
+
+import { getCropOffers } from "@utils/api";
+import { convertToKebabCase } from "@utils/functions";
+import { filterAt, getCategories, getCxStories } from "@utils/prismic";
+import { ChevronIcon } from "@assets/icons";
+
+const { results } = await getCategories("products");
+
+const buyerId = results.find((c) => c.data.name === "Buyer").id;
+
+const filters = filterAt("my.customer_stories_v3.category", buyerId);
+
+const customerStories = await getCxStories({
+  page: 1,
+  pageSize: 10,
+  filters,
+  fetchLinks: ["categories.name"],
+});
+
+const availableCropOffers: IAvailableCropOffers[] = [];
+
+const response = await getCropOffers();
+
+if (response) {
+  const { statusCode, data } = response;
+  if (statusCode == 200) {
+    for (const c of data) {
+      availableCropOffers.push({
+        ...c,
+        link: `/products/buyer/available-crops/${convertToKebabCase(
+          c.crop.name
+        )}`,
+        specs: [
+          c.specification?.cultivationType,
+          c.specification?.condition,
+          c.specification?.grade,
+        ].join(", "),
+      });
+    }
+  }
+}
+---
+
+<Layouts
+  title="Buyer | Complete Farmer"
+  description="We are providing cutting-edge technological farming protocols and innovations with a unique business model and logistics that are revolutionizing..."
+>
+  <HeroContainer bgImage="bg-hero-buyer">
+    <Hero client:load />
+  </HeroContainer>
+  <div class="flex space-x-2 justify-between md:justify-center items-center bg-buyer-500 w-full px-4 py-5 text-xs md:text-xl font-bold">
+    <p class="text-white w-1/2 md:w-auto">Join our Sales Affiliate Program and earn commissions.</p>
+    <a href="/products/buyer/sales-affiliate" class="flex flex-row flex-nowrap space-x-1 text-[#00FFE0] items-end">
+      <span>Learn more</span>
+      <ChevronIcon className="w-4 md:w-auto h-4 md:h-auto -rotate-90" />
+    </a>
+  </div>
+  <ProcurementTurnAround />
+  <ExperienceCrop client:visible />
+  {
+    customerStories.results.length > 0 && (
+      <CustomerStoriesSwiper data={customerStories} />
+    )
+  }
+  {
+    availableCropOffers.length > 0 && (
+      <AvailableCrops
+        cardType="buyer"
+        bgColor="bg-buyer-200"
+        data={availableCropOffers}
+        titleTextColor="text-buyer-400"
+        title="Finally experience a procurement platform that caters to your specifications."
+        desc="Say goodbye to scrambling to hit your targets and dealing with let-downs from suppliers. We make sourcing easier and more efficient for you and your team.  "
+      />
+    )
+  }
+  <Section product="Buyer" client:visible />
+</Layouts>

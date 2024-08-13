@@ -1,0 +1,61 @@
+---
+import { Image } from "astro:assets";
+
+import { ArrowIcon } from "@assets/icons";
+import { classNames } from "@utils/functions";
+
+interface Props {
+  title: string;
+  titleColor: string;
+  button: {
+    id?: string;
+    href?: string;
+    textColor: string;
+    bgColor: string;
+  };
+  image: ImageMetadata;
+  isAgent?: boolean;
+}
+
+const { image, title, isAgent, button, titleColor } = Astro.props;
+
+const classes = isAgent
+  ? "bg-grower-200 bg-interested-in-agent-mobile-1 sm:bg-interested-in-agent-tablet-1 lg:bg-interested-in-agent-1 "
+  : "bg-grower-400 bg-interested-in-agent-mobile sm:bg-interested-in-agent-tablet xl:bg-interested-in-agent";
+---
+
+<div
+  class={classNames(
+    classes,
+    "w-full h-full bg-center bg-cover bg-no-repeat flex flex-col py-12 sm:p-0 lg:p-10"
+  )}
+>
+  <div
+    class="max-w-7xl mx-auto w-full flex flex-col-reverse md:flex-row items-center sm:justify-between px-5 sm:p-14"
+  >
+    <div class="flex flex-col justify-center items-start gap-6">
+      <p
+        class={classNames(
+          titleColor,
+          "text-[28px] md:text-[32px] lg:text-[56px] leading-8 md:leading-10 lg:leading-[74px] font-bold text-center sm:text-left pt-10 sm:pt-0 lg:pt-10 pb-6 sm:pb-0 lg:pb-6"
+        )}
+      >
+        <Fragment set:html={title} />
+      </p>
+      <a
+        id={button.href === "!#" ? (button.id || "get-started-1") : undefined}
+        href={button.href}
+        class={classNames(
+          button.bgColor,
+          button.textColor,
+          "flex justify-center items-center w-full md:w-fit gap-2 px-8 py-4 rounded-full cursor-pointer"
+        )}
+      >
+        <span class="text-base font-bold text-left"> Get Started</span>
+        <ArrowIcon />
+      </a>
+      
+    </div>
+    <Image src={image} alt={title} class="sm:h-[220px] md:h-[200px] md:w-[155px] lg:h-auto lg:w-auto" />
+  </div>
+</div>

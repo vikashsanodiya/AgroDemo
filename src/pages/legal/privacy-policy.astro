@@ -1,0 +1,40 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import Header from "@components/legal/Header.astro";
+import {
+  Intro,
+  SocialSharing,
+  UpdatesToPrivacy,
+  InformationWeCollect,
+  InformationWithOthers,
+  InformationYouProvide,
+  CollectionPrivacyInfo,
+  ProtectionOfPersonalInfo,
+  DisclosureOfPersonalInfo,
+  InformationAboutTransaction,
+} from "@components/legal/privacy-policy";
+---
+
+<Layouts
+  title="Privacy Policy | Complete Farmer"
+  description="We are providing cutting-edge technological farming protocols and innovations with a unique business model and logistics that are revolutionizing..."
+>
+  <Header
+    title="Privacy Policy"
+    modifiedTime="Last modified: 28 January 2022"
+  />
+  <div class="bg-white py-8 sm:py-14 sm:px-6">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 text-justify">
+      <Intro />
+      <CollectionPrivacyInfo />
+      <InformationYouProvide />
+      <InformationAboutTransaction />
+      <InformationWithOthers />
+      <SocialSharing />
+      <InformationWeCollect />
+      <ProtectionOfPersonalInfo />
+      <DisclosureOfPersonalInfo />
+      <UpdatesToPrivacy />
+    </div>
+  </div>
+</Layouts>

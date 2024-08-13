@@ -1,0 +1,41 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+
+import { ParallaxImage, Partners } from "@components/utils";
+import {
+  Hero,
+  Section,
+  NewsLetter,
+  FasterGrowth,
+  CustomerStoriesSwiper,
+} from "@components/home";
+
+import Mest from "@assets/images/logos/partners/mest.png";
+import TazaPay from "@assets/images/logos/partners/tazapay.png";
+import Ingressive from "@assets/images/logos/partners/ingressive.png";
+import FreezeLink from "@assets/images/logos/partners/freezelink.webp";
+import VastFarmingLand from "@assets/images/home/vast-farming-land.webp";
+
+import { getCxStories } from "@utils/prismic";
+
+const customerStories = await getCxStories({ fetchLinks: ["categories.name"] });
+const assets = [Mest, TazaPay, FreezeLink, Ingressive];
+---
+
+<Layouts
+  title="Home | Complete Farmer"
+  description="We are providing cutting-edge technological farming protocols and innovations with a unique business model and logistics that are revolutionizing..."
+>
+  <Hero client:idle />
+  <Partners title="Trusted by global brands" client:only="react" assets={assets}/>
+  <FasterGrowth client:idle />
+  <ParallaxImage imgSrc={VastFarmingLand.src} client:only="react" />
+  <CustomerStoriesSwiper data={customerStories} />
+  <Section client:idle />
+  <NewsLetter client:idle />
+</Layouts>
+
+  <!-- https://www.thyngster.com/google-tag-manager-google-analytics-4-ga4-events-setup-with-a-single-tag
+  https://www.thyngster.com/tracking-google-analytics-4-events-using-data-attributes
+  https://developers.facebook.com/docs/meta-pixel/advanced/
+  https://developers.facebook.com/docs/meta-pixel/implementation/conversion-tracking -->

@@ -1,0 +1,10 @@
+export { default as Intro } from "./Intro.astro";
+export { default as SocialSharing } from "./SocialSharing.astro";
+export { default as UpdatesToPrivacy } from "./UpdatesToPrivacy.astro";
+export { default as InformationWeCollect } from "./InformationWeCollect.astro";
+export { default as InformationWithOthers } from "./InformationWithOthers.astro";
+export { default as CollectionPrivacyInfo } from "./CollectionPrivacyInfo.astro";
+export { default as InformationYouProvide } from "./InformationYouProvide.astro";
+export { default as DisclosureOfPersonalInfo } from "./DisclosureOfPersonalInfo.astro";
+export { default as ProtectionOfPersonalInfo } from "./ProtectionOfPersonalInfo.astro";
+export { default as InformationAboutTransaction } from "./InformationAboutTransaction.astro";

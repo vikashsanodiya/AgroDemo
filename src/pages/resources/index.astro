@@ -1,0 +1,75 @@
+---
+import {
+  BlogsSection,
+  NewsRoomSection,
+} from "@components/resources";
+
+import EventsSection from "@components/resources/EventsSection.astro";
+
+import Layouts from "@layouts/Layouts.astro";
+
+import { getNews, getBlogs, getEvents } from "@utils/prismic";
+import { formatDate, isDatePast } from "@utils/functions";
+import { newsConfig, blogsConfig, eventsConfig } from "@utils/constants";
+
+const newsApiData = await getNews({
+  page: 1,
+  pageSize: newsConfig.maxRecordsPerPage,
+});
+
+const news = newsApiData.results.map((item) => ({
+  ...item,
+  uid: item.uid,
+  title: item.data.headline[0].text,
+  tags: item.tags.length === 0 ? [] : item.tags,
+  date: formatDate("DD MMMM, YYYY", item.last_publication_date),
+}));
+
+const blogsApiData = await getBlogs({
+  page: 1,
+  pageSize: blogsConfig.maxRecordsPerPage,
+});
+
+const blogs = blogsApiData.results.map((item) => ({
+  ...item,
+  uid: item.uid,
+  title: item.data.headline[0].text,
+  tags: item.tags.length === 0 ? [] : item.tags,
+  date: formatDate("DD MMMM, YYYY", item.last_publication_date),
+}));
+
+const eventsApiData = await getEvents({
+  page: 1,
+  pageSize: eventsConfig.maxRecordsPerPage,
+});
+
+const events = eventsApiData.results.map((event) => ({
+  id: event.id,
+  uid: event.uid,
+  type: event?.data?.type,
+  platform: event?.data?.platform,
+  image: event?.data?.webinar_image,
+  speakers: event?.data?.speakers || [],
+  video: event?.data?.webinar_video?.url,
+  title: event?.data?.webinar_title?.[0].text,
+  register_link: event?.data?.register_link?.url,
+  isPast: isDatePast(event?.data?.start_date_time),
+  endDate: formatDate("DD MMMM, YYYY", event?.data?.end_date_time),
+  startDate: formatDate("DD MMMM, YYYY", event?.data?.start_date_time),
+  description: event.data?.description,
+  startTime: formatDate(
+    "h:mm A",
+    new Date(event?.data?.start_date_time).getTime()
+  ),
+  endTime: formatDate("h:mm A", new Date(event?.data?.end_date_time).getTime()),
+}));
+---
+
+<Layouts
+  title="Resources | Complete Farmer"
+  description="We are providing cutting-edge technological farming protocols and innovations with a unique business model and logistics that are revolutionizing..."
+>
+  <NewsRoomSection news={news} />
+  <EventsSection events={events} />
+  <BlogsSection blogs={blogs} />
+</Layouts>

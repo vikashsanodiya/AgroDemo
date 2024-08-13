@@ -1,0 +1,118 @@
+---
+import type { IAvailableCropOffers } from "types/app";
+
+import Layouts from "@layouts/Layouts.astro";
+import { BreadCrumb } from "@components/utils";
+import { TabView, CropDetails } from "@components/products/buyer";
+
+import {
+  convertToKebabCase,
+  generateMarketAvailabilityDataDynamic,
+} from "@utils/functions";
+import { getCropOffers } from "@utils/api";
+
+export async function getStaticPaths() {
+  const availableCropOffers: IAvailableCropOffers[] = [];
+
+  const { statusCode, data } = await getCropOffers();
+
+  if (statusCode == 200) {
+    for (const c of data) {
+      availableCropOffers.push({
+        ...c,
+        details2: [
+          {
+            key: "Variety",
+            value: c.specification.variety.name || "-",
+          },
+          {
+            key: "Botanical Name",
+            value: c.crop.scientificName || "-",
+          },
+          {
+            key: "Grade",
+            value: c.specification.grade || "-",
+          },
+          {
+            key: "Condition",
+            value: c.specification.condition || "-",
+          },
+          {
+            key: "Processing Style",
+            value: c.processingStyle || "-",
+          },
+          {
+            key: "Size",
+            value:
+              c?.sizeRange && Object.keys(c?.sizeRange).length > 0
+                ? `${c?.sizeRange?.min}g to ${c?.sizeRange?.max}g`
+                : "-",
+          },
+          {
+            key: "Color",
+            value: c.specification.color || "-",
+          },
+          {
+            key: "Total Quantity",
+            value: c.quantity ? String(c.quantity) : "-",
+          },
+        ],
+        features: [
+          c.crop?.seasonalInformation?.weatherDependency,
+          c.crop?.seasonalInformation?.startPlanting,
+          c.crop?.seasonalInformation?.harvestDates,
+        ].join(", "),
+        link: convertToKebabCase(c.crop.name),
+        seasonality: generateMarketAvailabilityDataDynamic(
+          c.crop.plantingDates
+        ),
+      });
+    }
+  }
+
+  return availableCropOffers.map((offer) => {
+    return {
+      params: { offer: offer.link },
+      props: { offer },
+    };
+  });
+}
+
+const { offer } = Astro.props;
+---
+
+<Layouts
+  title={`${offer.crop.name} • Buyer • Products | Complete Farmer`}
+  description={offer.crop.description}
+>
+  <BreadCrumb
+    bgColor="bg-buyer-400"
+    textColor="text-buyer-500"
+    title="Browse available crops"
+    href="/products/buyer#available-crops"
+  />
+  <div class="pt-14 space-y-10">
+    <div>
+      <CropDetails offer={offer} />
+    </div>
+    <div>
+      <TabView offer={offer} />
+    </div>
+  </div>
+</Layouts>
+<script
+  is:inline
+  type="text/javascript"
+  define:vars={{
+    offerId: offer._id,
+    cropName: offer.crop.name,
+    varietyName: offer.specification.variety.name
+  }}
+>
+  window.fbq("track", "ViewContent", {
+    content_type: "product",
+    content_ids: [offerId],
+    content_category: "Crop Offer Details Page",
+    content_name: cropName + " (" + varietyName + ")",
+  });
+</script>

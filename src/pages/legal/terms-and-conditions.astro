@@ -1,0 +1,69 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import Header from "@components/legal/Header.astro";
+import {
+  Intro,
+  Payment,
+  Conducts,
+  CopyRight,
+  Liability,
+  Assignment,
+  AnitBribery,
+  UseByMinors,
+  Disclaimers,
+  Termination,
+  GeneralTerms,
+  Governinglaw,
+  Miscellaneous,
+  Modifications,
+  PrivacyPolicy,
+  Communications,
+  ServiceLicense,
+  Indemnification,
+  ReservationRights,
+  DisputeResolution,
+  RelationshipParties,
+  ServiceRestrictions,
+  EligiblityRestriction,
+  TerritorialRestriction,
+} from "@components/legal/terms-conditions";
+---
+
+<Layouts
+  title="Terms & Conditions | Complete Farmer"
+  description="We are providing cutting-edge technological farming protocols and innovations with a unique business model and logistics that are revolutionizing..."
+>
+  <Header
+    title="Terms & Conditions"
+    modifiedTime="Last modified: 28 January 2022"
+  />
+
+  <div class="bg-white py-8 sm:py-14 sm:px-6">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 text-justify">
+      <GeneralTerms />
+      <Intro />
+      <TerritorialRestriction />
+      <UseByMinors />
+      <PrivacyPolicy />
+      <EligiblityRestriction />
+      <Payment />
+      <ServiceLicense />
+      <ServiceRestrictions />
+      <ReservationRights />
+      <Conducts />
+      <Communications />
+      <Indemnification />
+      <Disclaimers />
+      <Liability />
+      <Termination />
+      <CopyRight />
+      <Assignment />
+      <AnitBribery />
+      <Modifications />
+      <RelationshipParties />
+      <Governinglaw />
+      <DisputeResolution />
+      <Miscellaneous />
+    </div>
+  </div>
+</Layouts>
